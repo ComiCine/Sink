@@ -30,8 +30,8 @@ export function normalizeSlug(event: H3Event, slug: string): string {
 export function buildShortLink(event: H3Event, slug: string): string {
   const config = useRuntimeConfig(event)
   const base = config.app.baseURL || '/'
-  // Limooo：短链对外统一走 limooo.cn/<slug>（后台在 sink.limooo.cn）。
-  // 未配置 shortLinkBase 时沿用请求域名，保持上游默认行为。
+  // Public short links use the main site, which routes /link/* to this Worker.
+  // If no base is configured, keep the upstream request-host behavior.
   const origin = config.shortLinkBase || `${getRequestProtocol(event)}://${getRequestHost(event)}`
   const prefix = config.public.linkPrefix || ''
   const normalizedPrefix = prefix ? (prefix.startsWith('/') ? prefix : `/${prefix}`) : ''

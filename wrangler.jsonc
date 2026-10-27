@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "sink",
+  "name": "comicine-sink",
   "main": ".output/server/index.mjs",
   "assets": {
     "binding": "ASSETS",
@@ -12,9 +12,9 @@
     "nodejs_compat"
   ],
   "keep_vars": true,
-  // Limooo：站点只通过自定义域 sink.limooo.cn 提供服务。
-  // workers.dev 裸域是同一实例的第二个入口且绕过人机门禁，必须关闭；
-  // preview_urls 同理（每次部署的 *.workers.dev 预览地址）。
+  // Serve the dashboard on sink.comicine.com and keep workers.dev entry points disabled.
+  // The main site routes public short links at comicine.com/link/* to this Worker.
+  // Preview URLs are disabled for the same reason as workers.dev access.
   "workers_dev": false,
   "preview_urls": false,
   "upload_source_maps": true,

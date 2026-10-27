@@ -71,11 +71,13 @@ description: Sink 支持的全部环境变量——做什么、填在哪、什�
 
 Workers 要在 Builds 和运行时填相同值。Pages 只填一次，然后重新部署。
 
-| 变量                              | 默认 | 用途                                 |
-| --------------------------------- | ---- | ------------------------------------ |
-| `NUXT_PUBLIC_PREVIEW_MODE`        | 空   | `true` = 演示模式（链接只活 5 分钟） |
-| `NUXT_PUBLIC_SLUG_DEFAULT_LENGTH` | `6`  | 自动生成短链码的长度                 |
-| `NUXT_PUBLIC_KV_BATCH_LIMIT`      | `50` | 导出每页条数；导入每次最多一半       |
+| 变量                              | 默认                   | 用途                                 |
+| --------------------------------- | ---------------------- | ------------------------------------ |
+| `NUXT_PUBLIC_PREVIEW_MODE`        | 空                     | `true` = 演示模式（链接只活 5 分钟） |
+| `NUXT_PUBLIC_SLUG_DEFAULT_LENGTH` | `6`                    | 自动生成短链码的长度                 |
+| `NUXT_PUBLIC_KV_BATCH_LIMIT`      | `50`                   | 导出每页条数；导入每次最多一半       |
+| `NUXT_PUBLIC_SHORT_LINK_BASE`     | `https://comicine.com` | 仪表盘展示短链时使用的公开域名       |
+| `NUXT_PUBLIC_LINK_PREFIX`         | `/link`                | 公开短链使用的路径前缀               |
 
 ## 可选配置
 
@@ -93,6 +95,8 @@ Workers 要在 Builds 和运行时填相同值。Pages 只填一次，然后重�
 | 变量                                                | 用途                                                           |
 | --------------------------------------------------- | -------------------------------------------------------------- |
 | `NUXT_HOME_URL`                                     | 非空则把 `/` 重定向到该 URL；空则显示 Sink 首页                |
+| `NUXT_SITE_TOKEN_USER`                              | site-token 与 service-token 会话中显示的邮箱标签               |
+| `NUXT_SHORT_LINK_BASE`                              | 服务端生成短链时使用的域名                                     |
 | `NUXT_NOT_FOUND_REDIRECT`                           | 未知短链码跳到哪里（**始终 HTTP 302**）                        |
 | `NUXT_CF_ACCESS_TEAM_DOMAIN` + `NUXT_CF_ACCESS_AUD` | 两个都设 → 启用 [Cloudflare Access](./cloudflare-access)       |
 | `NUXT_SAFE_BROWSING_DOH`                            | 用于检查不安全域名的 DNS-over-HTTPS 地址（未设置 `unsafe` 时） |

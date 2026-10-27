@@ -66,7 +66,7 @@ const retryCounters = inject(RETRY_LINK_COUNTERS_KEY)
 const countersError = computed(() => counterErrorIds?.value.has(props.link.id) ?? false)
 
 const requestUrl = useRequestURL()
-// Limooo：短链展示统一用 limooo.cn（后台在 sink.limooo.cn），未配置则沿用请求域名。
+// Public short links use the main site; if no base is configured, use the request host.
 const origin = useRuntimeConfig().public.shortLinkBase || requestUrl.origin
 const appBase = useRuntimeConfig().app.baseURL.replace(/\/$/, '')
 const linkPrefix = useRuntimeConfig().public.linkPrefix || ''

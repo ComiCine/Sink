@@ -28,7 +28,7 @@ describe('/', () => {
     const createData = await createResponse.json() as { link: { apple?: string } }
     expect(createData.link.apple).toBe(apple)
 
-    const response = await fetch(`/${slug}`, {
+    const response = await fetch(`/link/${slug}`, {
       redirect: 'manual',
       headers: {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/147 Version/11.1.1 Safari/605.1.15',
@@ -51,7 +51,7 @@ describe('/', () => {
     expect(createResponse.status).toBe(201)
     createdSlugs.push(slug)
 
-    const response = await fetch(`/${slug}?campaign=summer&shared=request`, { redirect: 'manual' })
+    const response = await fetch(`/link/${slug}?campaign=summer&shared=request`, { redirect: 'manual' })
 
     expect(response.status).toBe(301)
     expect(response.headers.get('Location')).toBe('https://example.com/landing?source=original&shared=request&campaign=summer')
@@ -70,7 +70,7 @@ describe('/', () => {
     expect(createResponse.status).toBe(201)
     createdSlugs.push(slug)
 
-    const botResponse = await fetch(`/${slug}`, {
+    const botResponse = await fetch(`/link/${slug}`, {
       redirect: 'manual',
       headers: { 'User-Agent': 'Twitterbot/1.0' },
     })
@@ -81,7 +81,7 @@ describe('/', () => {
     expect(html).toContain('<meta property="og:description" content="Social preview description">')
     expect(html).toContain(`content="1;url=${targetUrl}"`)
 
-    const browserResponse = await fetch(`/${slug}`, {
+    const browserResponse = await fetch(`/link/${slug}`, {
       redirect: 'manual',
       headers: { 'User-Agent': 'Mozilla/5.0' },
     })
@@ -102,7 +102,7 @@ describe('/', () => {
     createdSlugs.push(slug)
 
     const options: CfRequestInit = { redirect: 'manual', cf: { country: 'CN' } }
-    const response = await fetch(`/${slug}`, options as RequestInit)
+    const response = await fetch(`/link/${slug}`, options as RequestInit)
 
     expect(response.status).toBe(301)
     expect(response.headers.get('Location')).toBe(cnUrl)
@@ -121,7 +121,7 @@ describe('/', () => {
     createdSlugs.push(slug)
 
     const options: CfRequestInit = { redirect: 'manual', cf: { country: 'US' } }
-    const response = await fetch(`/${slug}`, options as RequestInit)
+    const response = await fetch(`/link/${slug}`, options as RequestInit)
 
     expect(response.status).toBe(301)
     expect(response.headers.get('Location')).toBe(defaultUrl)
@@ -141,7 +141,7 @@ describe('/', () => {
     createdSlugs.push(slug)
 
     const options: CfRequestInit = { redirect: 'manual', cf: { country: 'CN' } }
-    const response = await fetch(`/${slug}`, options as RequestInit)
+    const response = await fetch(`/link/${slug}`, options as RequestInit)
     const html = await response.text()
 
     expect(response.status).toBe(200)
@@ -160,7 +160,7 @@ describe('/', () => {
     expect(createResponse.status).toBe(201)
     createdSlugs.push(slug)
 
-    const response = await fetch(`/${slug}`, { redirect: 'manual' })
+    const response = await fetch(`/link/${slug}`, { redirect: 'manual' })
     const html = await response.text()
 
     expect(response.status).toBe(200)
@@ -191,7 +191,7 @@ describe('/', () => {
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/147 Version/11.1.1 Mobile/15E148 Safari/604.1',
       },
     }
-    const response = await fetch(`/${slug}`, options as RequestInit)
+    const response = await fetch(`/link/${slug}`, options as RequestInit)
 
     expect(response.status).toBe(301)
     expect(response.headers.get('Location')).toBe(apple)
@@ -211,17 +211,17 @@ describe('password protected redirect', { concurrent: false }, () => {
     expect(createResponse.status).toBe(201)
     createdSlugs.push(payload.slug)
 
-    const passwordPageResponse = await fetch(`/${payload.slug}`, { redirect: 'manual' })
+    const passwordPageResponse = await fetch(`/link/${payload.slug}`, { redirect: 'manual' })
     expect(passwordPageResponse.status).toBe(200)
     expect(await passwordPageResponse.text()).toContain('Password Required')
 
-    const wrongPasswordResponse = await fetch(`/${payload.slug}`, {
+    const wrongPasswordResponse = await fetch(`/link/${payload.slug}`, {
       redirect: 'manual',
       headers: { 'x-link-password': 'wrong-password' },
     })
     expect(wrongPasswordResponse.status).toBe(403)
 
-    const correctPasswordResponse = await fetch(`/${payload.slug}`, {
+    const correctPasswordResponse = await fetch(`/link/${payload.slug}`, {
       redirect: 'manual',
       headers: { 'x-link-password': password },
     })
@@ -243,11 +243,11 @@ describe('password protected redirect', { concurrent: false }, () => {
     expect(createResponse.status).toBe(201)
     createdSlugs.push(slug)
 
-    const passwordResponse = await fetch(`/${slug}`, { redirect: 'manual' })
+    const passwordResponse = await fetch(`/link/${slug}`, { redirect: 'manual' })
     expect(passwordResponse.status).toBe(200)
     expect(await passwordResponse.text()).toContain('Password Required')
 
-    const warningResponse = await fetch(`/${slug}`, {
+    const warningResponse = await fetch(`/link/${slug}`, {
       method: 'POST',
       redirect: 'manual',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -259,7 +259,7 @@ describe('password protected redirect', { concurrent: false }, () => {
     expect(warningHtml).toContain(`<input type="hidden" name="password" value="${password}">`)
     expect(warningHtml).toContain('<input type="hidden" name="confirm" value="true">')
 
-    const confirmedResponse = await fetch(`/${slug}`, {
+    const confirmedResponse = await fetch(`/link/${slug}`, {
       method: 'POST',
       redirect: 'manual',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

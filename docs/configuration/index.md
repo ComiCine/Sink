@@ -71,11 +71,13 @@ Also bind `ANALYTICS`. Add `R2` for [backups](/features/backups), `AI` for [Work
 
 On Workers, set the same value in Builds and runtime. On Pages, set once, then redeploy.
 
-| Variable                          | Default | Purpose                                                   |
-| --------------------------------- | ------- | --------------------------------------------------------- |
-| `NUXT_PUBLIC_PREVIEW_MODE`        | empty   | `true` = demo mode (links last 5 minutes)                 |
-| `NUXT_PUBLIC_SLUG_DEFAULT_LENGTH` | `6`     | Length of auto-generated short codes                      |
-| `NUXT_PUBLIC_KV_BATCH_LIMIT`      | `50`    | Export page size; import accepts at most half per request |
+| Variable                          | Default                | Purpose                                                   |
+| --------------------------------- | ---------------------- | --------------------------------------------------------- |
+| `NUXT_PUBLIC_PREVIEW_MODE`        | empty                  | `true` = demo mode (links last 5 minutes)                 |
+| `NUXT_PUBLIC_SLUG_DEFAULT_LENGTH` | `6`                    | Length of auto-generated short codes                      |
+| `NUXT_PUBLIC_KV_BATCH_LIMIT`      | `50`                   | Export page size; import accepts at most half per request |
+| `NUXT_PUBLIC_SHORT_LINK_BASE`     | `https://comicine.com` | Public origin used to display short links                 |
+| `NUXT_PUBLIC_LINK_PREFIX`         | `/link`                | Path prefix used for public short links                   |
 
 ## Optional
 
@@ -93,6 +95,8 @@ On Workers, set the same value in Builds and runtime. On Pages, set once, then r
 | Variable                                            | Purpose                                                                  |
 | --------------------------------------------------- | ------------------------------------------------------------------------ |
 | `NUXT_HOME_URL`                                     | Non-empty URL redirects `/`; empty shows the Sink homepage               |
+| `NUXT_SITE_TOKEN_USER`                              | Email label shown for site-token and service-token sessions              |
+| `NUXT_SHORT_LINK_BASE`                              | Origin used when the server generates short-link URLs                    |
 | `NUXT_NOT_FOUND_REDIRECT`                           | Where to send unknown short codes (**always HTTP 302**)                  |
 | `NUXT_CF_ACCESS_TEAM_DOMAIN` + `NUXT_CF_ACCESS_AUD` | Both set → enable [Cloudflare Access](./cloudflare-access)               |
 | `NUXT_SAFE_BROWSING_DOH`                            | DNS-over-HTTPS URL used to check unsafe domains when `unsafe` is not set |

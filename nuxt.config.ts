@@ -3,6 +3,24 @@ import process from 'node:process'
 import tailwindcss from '@tailwindcss/vite'
 import { currentLocales } from './i18n/i18n'
 
+function normalizeShortLinkBase(value: string | undefined): string {
+  const base = value?.trim() || 'https://comicine.com'
+  try {
+    const url = new URL(base)
+    if (url.hostname.toLowerCase() === 'limooo.cn')
+      url.hostname = 'comicine.com'
+    return url.toString().replace(/\/$/, '')
+  }
+  catch {
+    return 'https://comicine.com'
+  }
+}
+
+const configuredSiteTokenUser = process.env.NUXT_SITE_TOKEN_USER?.trim()
+const siteTokenUser = configuredSiteTokenUser?.toLowerCase() === 'admin@limooo.cn'
+  ? 'admin@comicine.com'
+  : configuredSiteTokenUser || 'admin@comicine.com'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
@@ -14,8 +32,8 @@ export default defineNuxtConfig({
     'shadcn-nuxt',
   ],
   devtools: { enabled: true },
-  // Limooo 部署：站点挂在 sink.limooo.cn 根路径（历史遗留的 /sink 子路径已废弃）。
-  // 显式写死 app.baseURL，避免 Host 上的 NUXT_APP_BASE_URL 环境变量再次把它改回 /sink/。
+  // The dashboard is served at the root of sink.comicine.com.
+  // Keep app.baseURL at '/' so a stale NUXT_APP_BASE_URL cannot add a path prefix.
   app: {
     baseURL: '/',
   },
@@ -25,10 +43,10 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     siteToken: process.env.NUXT_SITE_TOKEN || randomBytes(32).toString('base64url'),
-    // Limooo：后台登录名固定为 admin@limooo.cn，不随访问域名变化。
-    siteTokenUser: process.env.NUXT_SITE_TOKEN_USER || 'admin@limooo.cn',
-    // Limooo：短链对外域名（服务端 buildShortLink 用），默认 limooo.cn。
-    shortLinkBase: process.env.NUXT_SHORT_LINK_BASE || 'https://limooo.cn',
+    // Keep the dashboard identity stable across site-token and Access authentication.
+    siteTokenUser,
+    // The main site routes /link/* to this Worker for public short links.
+    shortLinkBase: normalizeShortLinkBase(process.env.NUXT_SHORT_LINK_BASE),
     cfAccessTeamDomain: '',
     cfAccessAud: '',
     redirectStatusCode: '301',
@@ -55,9 +73,9 @@ export default defineNuxtConfig({
       previewMode: '',
       slugDefaultLength: '6',
       kvBatchLimit: '50',
-      // Limooo：短链对外域名（后台在 sink.limooo.cn 访问，短链走 limooo.cn）。
-      shortLinkBase: process.env.NUXT_PUBLIC_SHORT_LINK_BASE || 'https://limooo.cn',
-      // Limooo：短链路径前缀（limooo.cn/link/<slug>）。
+      // The main site routes /link/* to this Worker for public short links.
+      shortLinkBase: normalizeShortLinkBase(process.env.NUXT_PUBLIC_SHORT_LINK_BASE),
+      // Keep public links under /link to avoid collisions with the main site.
       linkPrefix: process.env.NUXT_PUBLIC_LINK_PREFIX || '/link',
     },
   },

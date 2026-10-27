@@ -91,7 +91,7 @@ describe('d1 link integration', () => {
     expect(query.status).toBe(200)
     expect(await query.json()).toMatchObject({ slug: link.slug, url: link.url })
 
-    const redirect = await fetch(`/${link.slug}`, { redirect: 'manual' })
+    const redirect = await fetch(`/link/${link.slug}`, { redirect: 'manual' })
     expect(redirect.status).toBe(301)
     expect(redirect.headers.get('Location')).toBe('https://tampered.example/')
     expect(await getStoredLink(link.slug)).toMatchObject({ slug: link.slug, url: 'https://tampered.example/' })
@@ -169,7 +169,7 @@ describe('d1 link integration', () => {
     expect(await list('active')).toEqual([active.slug])
     expect(await list('expired')).toEqual([expired.slug])
     expect(new Set(await list('all'))).toEqual(new Set([active.slug, expired.slug]))
-    expect((await fetch(`/${expired.slug}`, { redirect: 'manual' })).status).toBe(404)
+    expect((await fetch(`/link/${expired.slug}`, { redirect: 'manual' })).status).toBe(404)
 
     const queried = await (await fetchWithAuth(`/api/link/query?slug=${expired.slug}`)).json() as Link
     expect(queried.id).toBe(expired.id)
@@ -182,7 +182,7 @@ describe('d1 link integration', () => {
     expect(edit.status).toBe(201)
     const restored = await edit.json() as { link: Link }
     expect(restored.link.id).toBe(expired.id)
-    const redirect = await fetch(`/${expired.slug}`, { redirect: 'manual' })
+    const redirect = await fetch(`/link/${expired.slug}`, { redirect: 'manual' })
     expect(redirect.status).toBeGreaterThanOrEqual(300)
     expect(redirect.status).toBeLessThan(400)
     expect(redirect.headers.get('Location')).toBe(expired.url)
@@ -194,7 +194,7 @@ describe('d1 link integration', () => {
     await putKvLink(link)
     const before = await env.KV.getWithMetadata(`link:${link.slug}`)
 
-    const redirect = await fetch(`/${link.slug}`, { redirect: 'manual' })
+    const redirect = await fetch(`/link/${link.slug}`, { redirect: 'manual' })
 
     expect(redirect.status).toBe(301)
     expect(redirect.headers.get('Location')).toBe(link.url)
@@ -214,12 +214,12 @@ describe('d1 link integration', () => {
     await env.KV.put(`link:${payloadActive.slug}`, JSON.stringify(payloadActive))
     await env.KV.put(`link:${payloadExpired.slug}`, JSON.stringify(payloadExpired))
 
-    const activeRedirect = await fetch(`/${metadataActive.slug}`, { redirect: 'manual' })
+    const activeRedirect = await fetch(`/link/${metadataActive.slug}`, { redirect: 'manual' })
     expect(activeRedirect.status).toBe(301)
     expect(activeRedirect.headers.get('Location')).toBe(metadataActive.url)
-    expect((await fetch(`/${metadataExpired.slug}`, { redirect: 'manual' })).status).toBe(404)
-    expect((await fetch(`/${payloadActive.slug}`, { redirect: 'manual' })).status).toBe(301)
-    expect((await fetch(`/${payloadExpired.slug}`, { redirect: 'manual' })).status).toBe(404)
+    expect((await fetch(`/link/${metadataExpired.slug}`, { redirect: 'manual' })).status).toBe(404)
+    expect((await fetch(`/link/${payloadActive.slug}`, { redirect: 'manual' })).status).toBe(301)
+    expect((await fetch(`/link/${payloadExpired.slug}`, { redirect: 'manual' })).status).toBe(404)
     expect(await getStoredLink(metadataExpired.slug)).not.toBeNull()
     expect(await getStoredLink(payloadExpired.slug)).not.toBeNull()
   })
@@ -230,7 +230,7 @@ describe('d1 link integration', () => {
     await insertD1Link(link)
     await env.KV.delete(`link:${link.slug}`)
 
-    expect((await fetch(`/${link.slug}`, { redirect: 'manual' })).status).toBe(404)
+    expect((await fetch(`/link/${link.slug}`, { redirect: 'manual' })).status).toBe(404)
     expect(await getStoredLink(link.slug)).toBeNull()
     expect((await fetchWithAuth(`/api/link/query?slug=${link.slug}`)).status).toBe(423)
     expect((await fetchWithAuth('/api/link/list')).status).toBe(423)
@@ -269,7 +269,7 @@ describe('d1 link integration', () => {
     await insertD1Link(link)
     await env.KV.delete(`link:${link.slug}`)
 
-    const redirect = await fetch(`/${link.slug}`, { redirect: 'manual' })
+    const redirect = await fetch(`/link/${link.slug}`, { redirect: 'manual' })
     expect(redirect.status).toBe(301)
     expect(redirect.headers.get('Location')).toBe(link.url)
     expect(await getStoredLink(link.slug)).toMatchObject({ slug: link.slug, url: link.url })
@@ -280,7 +280,7 @@ describe('d1 link integration', () => {
     const link = makeLink(undefined, { tags: ['legacy-tag'] })
     await putKvLink(link)
 
-    expect((await fetch(`/${link.slug}`, { redirect: 'manual' })).status).toBe(301)
+    expect((await fetch(`/link/${link.slug}`, { redirect: 'manual' })).status).toBe(301)
     expect((await fetchWithAuth(`/api/link/query?slug=${link.slug}`)).status).toBe(423)
     expect(await getD1Link(link.slug)).toBeNull()
 
@@ -377,7 +377,7 @@ describe('d1 link integration', () => {
     await putKvLink(link)
     await runMigration(true)
 
-    const redirect = await fetch(`/${link.slug}`, { redirect: 'manual' })
+    const redirect = await fetch(`/link/${link.slug}`, { redirect: 'manual' })
     expect(redirect.status).toBe(301)
     expect(redirect.headers.get('Location')).toBe(link.url)
     expect(await getStoredLink(link.slug)).toMatchObject({ slug: link.slug })
@@ -419,7 +419,7 @@ describe('d1 link integration', () => {
     expect(expiredList.links).toContainEqual(expect.objectContaining({ slug: link.slug, id: link.id, tags: [tag] }))
     const activeList = await (await fetchWithAuth(`/api/link/list?status=active&tag=${tag}`)).json() as { links: Link[] }
     expect(activeList.links).toEqual([])
-    expect((await fetch(`/${link.slug}`, { redirect: 'manual' })).status).toBe(404)
+    expect((await fetch(`/link/${link.slug}`, { redirect: 'manual' })).status).toBe(404)
     expect(await getStoredLink(link.slug)).toBeNull()
   })
 
@@ -519,7 +519,7 @@ describe('d1 link integration', () => {
     await env.KV.put(`link:${publicSlug}`, JSON.stringify({ url: 'https://example.com/public', tags: [] }))
     await env.KV.put(`link:${migrationSlug}`, JSON.stringify({ id: '  ', url: 'https://example.com/force', createdAt: '', updatedAt: null, tags: [] }))
 
-    const redirect = await fetch(`/${publicSlug}`, { redirect: 'manual' })
+    const redirect = await fetch(`/link/${publicSlug}`, { redirect: 'manual' })
     expect(redirect.status).toBe(301)
     expect(redirect.headers.get('Location')).toBe('https://example.com/public')
     expect(await getD1Link(publicSlug)).toBeNull()
@@ -539,7 +539,7 @@ describe('d1 link integration', () => {
     const slug = trackSlug(`malformed-legacy-${crypto.randomUUID()}`)
     await env.KV.put(`link:${slug}`, JSON.stringify({ url: 'not-a-url', tags: [] }))
 
-    expect((await fetch(`/${slug}`, { redirect: 'manual' })).status).toBe(404)
+    expect((await fetch(`/link/${slug}`, { redirect: 'manual' })).status).toBe(404)
     expect(await env.KV.get(`link:${slug}`)).not.toBeNull()
     const response = await postJson('/api/link/migration/run', { force: true })
     const result = await response.json() as LinkMigrationRunResult
@@ -655,7 +655,7 @@ describe('d1 link integration', () => {
     const active = makeLink()
     await insertD1Link(active)
     await env.KV.delete(`link:${active.slug}`)
-    const redirect = await fetch(`/${active.slug}`, { redirect: 'manual' })
+    const redirect = await fetch(`/link/${active.slug}`, { redirect: 'manual' })
     expect(redirect.status).toBeGreaterThanOrEqual(300)
     const cached = await getStoredLink(active.slug)
     expect(cached).toMatchObject(active)
@@ -665,7 +665,7 @@ describe('d1 link integration', () => {
     const expired = makeLink()
     await insertD1Link(expired, Math.floor(Date.now() / 1000) - 1)
     await env.KV.delete(`link:${expired.slug}`)
-    expect((await fetch(`/${expired.slug}`, { redirect: 'manual' })).status).toBe(404)
+    expect((await fetch(`/link/${expired.slug}`, { redirect: 'manual' })).status).toBe(404)
     expect(await getStoredLink(expired.slug)).toBeNull()
   })
 

@@ -105,7 +105,7 @@ export function mapCloudflareAccessIdentity(
   return {
     authMethod: 'access-service',
     userID: 'root',
-    // Limooo：与 site-token 路径保持一致，登录名固定不随域名变化。
+    // Keep the Access service identity consistent with the site-token identity.
     userEmail: useRuntimeConfig().siteTokenUser || `root@${hostname}`,
   }
 }

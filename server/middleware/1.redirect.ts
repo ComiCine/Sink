@@ -48,9 +48,9 @@ function hasOgConfig(link: Link): boolean {
 }
 
 /**
- * Limooo：短链对外前缀。短链挂在主域 limooo.cn 上，为避免与 Pages 主站路径
- * 冲突，统一走 `/link/<slug>`；后台与 API 仍在根路径。
- * 可用 NUXT_PUBLIC_LINK_PREFIX 覆盖（空字符串即回到上游的根路径行为）。
+ * Public short links use `/link/<slug>` on the main site to avoid collisions
+ * with Pages routes; the dashboard and API remain at the root of this Worker.
+ * Override with NUXT_PUBLIC_LINK_PREFIX (an empty value restores root-path links).
  */
 function stripLinkPrefix(path: string, prefix: string): string {
   if (!prefix)
